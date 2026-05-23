@@ -1,44 +1,59 @@
-# NotiLogger
+# NotiLogger 📱
 
-NotiLogger is a native Android application designed to capture and log notifications from the Android system. It provides a convenient way to review missed or dismissed notifications and manage them efficiently.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Android](https://img.shields.io/badge/Platform-Android-brightgreen.svg)](https://developer.android.com/)
+[![Kotlin](https://img.shields.io/badge/Language-Kotlin-purple.svg)](https://kotlinlang.org/)
 
-## Features
+**NotiLogger** is a privacy-focused, open-source Android application that allows you to capture, store, and manage your system notifications locally. Never miss a notification again.
 
-- **Notification Logging:** Automatically captures and saves notifications to a local database.
-- **App Filtering:** Choose which apps to log or exclude using Blacklist or Whitelist modes.
-- **System App Support:** Option to show and filter system applications.
-- **Search and Organize:** View notifications grouped by application.
-- **Export Logs:** Export your captured notifications to a JSON file.
-- **Material Design:** A clean, modern interface following Material Design guidelines with Dark Mode support.
+---
 
-## Screenshots
+## ✨ Features
 
-*(Add screenshots here)*
+- 📝 **Auto-Logging:** Automatically saves every notification to a local SQLite database.
+- 🛡️ **Advanced Filtering:** 
+    - **Whitelist Mode:** Log only from selected apps.
+    - **Blacklist Mode:** Ignore notifications from specific apps.
+- ⚙️ **System App Toggle:** Option to include or exclude system applications from logs and filters.
+- 📤 **Export & Backup:** Export your logs to a structured `JSON` file for backup or analysis.
+- 🎨 **Modern UI:** Built with Material 3 components, featuring a clean Dark Mode interface.
+- 🔒 **Privacy First:** All data stays on your device. No internet permission required for logging.
 
-## Installation
+## 📸 Screenshots
 
-You can download the latest APK from the [Releases](https://github.com/mamun10fx/NotiLogger/releases) page.
+| Home Screen | Filter Settings | Notification Details |
+| :---: | :---: | :---: |
+| *(Image Link)* | *(Image Link)* | *(Image Link)* |
 
-**Note:** After installation, you must manually grant **Notification Access** permission:
-`Settings -> Apps -> Special app access -> Notification access -> NotiLogger`
+## 🚀 Installation
 
-## Technical Details
+1. Download the latest APK from the [Releases](https://github.com/mamun10fx/NotiLogger/releases) page.
+2. Install the APK on your Android device.
+3. **Grant Permission:**
+    - Go to `Settings` -> `Apps` -> `Special app access` -> `Notification access`.
+    - Enable **NotiLogger**.
 
-- **Language:** Kotlin
-- **Build System:** Gradle (Kotlin DSL)
-- **Persistence:** Room Database
-- **Concurrency:** Kotlin Coroutines & Flow
-- **UI:** Android XML Layouts & Material Components
+## 🛠️ Built With
 
-## License
+- **Kotlin** - Primary programming language.
+- **Room Persistence** - Local SQLite database management.
+- **Coroutines & Flow** - Asynchronous programming and reactive data streams.
+- **Material Components** - UI design system.
+- **Gson** - JSON serialization.
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## 🤝 Contributing
 
-## Author
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for more details.
+
+## 📄 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+## 👤 Author
 
 **Abdullah Al Mamun**
-- Email: [mamun10fx@gmail.com](mailto:mamun10fx@gmail.com)
-- Facebook: [mamun10fx](https://www.facebook.com/profile.php?id=61583220766712)
-- Telegram: [@mamun10sc](https://t.me/mamun10sc)
-- Instagram: [@mamun10xc](https://www.instagram.com/mamun10xc)
-- YouTube: [@mamun10fx](https://m.youtube.com/@mamun10fx)
+- GitHub: [@mamun10fx](https://github.com/mamun10fx)
+- Email: mamun10fx@gmail.com
+- Socials: [Facebook](https://www.facebook.com/profile.php?id=61583220766712) | [Telegram](https://t.me/mamun10sc) | [Instagram](https://www.instagram.com/mamun10xc)
