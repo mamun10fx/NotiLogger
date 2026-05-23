@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="#1F1F1F"
+    android:gravity="center">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Abdullah Al Mamun"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Developer"
+        android:textColor="#BB86FC"
+        android:layout_marginBottom="24dp"/>
+
+    <Button android:id="@+id/btnEmail" android:text="Email Me" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <Button android:id="@+id/btnFB" android:text="Facebook" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <Button android:id="@+id/btnWA" android:text="WhatsApp" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <Button android:id="@+id/btnTG" android:text="Telegram" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <Button android:id="@+id/btnInsta" android:text="Instagram" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <Button android:id="@+id/btnGit" android:text="GitHub" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <Button android:id="@+id/btnYT" android:text="YouTube" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+</LinearLayout>

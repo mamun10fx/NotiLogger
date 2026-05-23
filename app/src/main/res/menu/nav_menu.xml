@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="none">
+        <item
+            android:id="@+id/nav_permission"
+            android:icon="@android:drawable/ic_popup_reminder"
+            android:title="Enable Notification Access" />
+        <item
+            android:id="@+id/nav_battery"
+            android:icon="@android:drawable/ic_lock_idle_charging"
+            android:title="Always Run (Battery)" />
+            
+        <item
+            android:id="@+id/nav_filter"
+            android:icon="@android:drawable/ic_menu_preferences"
+            android:title="Filter Apps" />
+    </group>
+    
+    <item android:title="Actions">
+        <menu>
+            <item
+                android:id="@+id/nav_save"
+                android:icon="@android:drawable/ic_menu_save"
+                android:title="Save Logs to File" />
+            <item
+                android:id="@+id/nav_clear"
+                android:icon="@android:drawable/ic_menu_delete"
+                android:title="Clear All Logs" />
+        </menu>
+    </item>
+
+    <item android:title="Info">
+        <menu>
+            <item
+                android:id="@+id/nav_about"
+                android:icon="@android:drawable/ic_menu_info_details"
+                android:title="About Developer" />
+        </menu>
+    </item>
+</menu>

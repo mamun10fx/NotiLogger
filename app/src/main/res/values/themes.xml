@@ -1,0 +1,9 @@
+<resources>
+    <style name="Theme.NotiLogger" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">#BB86FC</item>
+        <item name="colorPrimaryVariant">#3700B3</item>
+        <item name="colorOnPrimary">#000000</item>
+        <item name="android:textColorPrimary">#FFFFFF</item> <item name="android:windowBackground">#121212</item>
+        <item name="android:statusBarColor">#121212</item>
+    </style>
+</resources>

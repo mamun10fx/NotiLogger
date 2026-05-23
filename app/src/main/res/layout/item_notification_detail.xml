@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:layout_marginHorizontal="4dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="0dp"
+    app:cardBackgroundColor="#1E1E1E">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <ImageButton
+            android:id="@+id/btnCopy"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_copy"
+            app:tint="#BB86FC"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Copy Log"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_toStartOf="@id/btnCopy"
+            android:layout_marginEnd="8dp">
+
+            <TextView
+                android:id="@+id/tvNotiTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Title"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textIsSelectable="true"/>
+
+            <TextView
+                android:id="@+id/tvNotiContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Message..."
+                android:layout_marginTop="4dp"
+                android:textColor="#DDDDDD"
+                android:textSize="14sp"
+                android:textIsSelectable="true"/>
+            
+            <TextView
+                android:id="@+id/tvNotiTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="12:00 PM"
+                android:layout_marginTop="8dp"
+                android:textColor="#BB86FC"
+                android:textSize="12sp"
+                android:alpha="0.8"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+</com.google.android.material.card.MaterialCardView>
