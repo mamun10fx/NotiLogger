@@ -20,6 +20,8 @@ class NotificationService : NotificationListenerService() {
 	
 	if (!FilterManager.shouldLog(applicationContext, sbn.packageName)) return
         
+        // Keyword Filtering
+        if (KeywordManager.shouldBlockNotification(applicationContext, sbn.packageName, title, text)) return
         
         if (title.isBlank() && text.isBlank()) return
 

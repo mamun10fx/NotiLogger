@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="#121212">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#1F1F1F"
+        android:padding="16dp"
+        android:elevation="4dp">
+        
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Security Settings"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"/>
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Authentication Block (Shown if locked) -->
+            <LinearLayout
+                android:id="@+id/layoutAuth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+                
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Verify current password to change settings"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginBottom="8dp"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilCurrentPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Current Password/PIN"
+                    app:hintTextColor="#BB86FC"
+                    app:passwordToggleEnabled="true">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etCurrentPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword"
+                        android:textColor="#FFFFFF"
+                        android:background="#2C2C2C"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnVerify"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Verify"
+                    android:layout_marginTop="8dp"/>
+            </LinearLayout>
+
+            <!-- Main Settings Block -->
+            <LinearLayout
+                android:id="@+id/layoutSettings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switchAppLock"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Enable App Lock"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="App will require a password to open."
+                    android:textColor="#888888"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="16dp"/>
+
+                <LinearLayout
+                    android:id="@+id/layoutLockSetup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Lock Type"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:layout_marginTop="8dp"/>
+
+                    <RadioGroup
+                        android:id="@+id/rgLockType"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        
+                        <RadioButton
+                            android:id="@+id/rbPassword"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Password"
+                            android:textColor="#FFFFFF"
+                            android:layout_weight="1"/>
+                            
+                        <RadioButton
+                            android:id="@+id/rbPin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="PIN"
+                            android:textColor="#FFFFFF"
+                            android:layout_weight="1"/>
+                    </RadioGroup>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Auto Lock Timeout"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:layout_marginTop="16dp"/>
+
+                    <RadioGroup
+                        android:id="@+id/rgTimeout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        
+                        <RadioButton
+                            android:id="@+id/rbImmediate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Immediately"
+                            android:textColor="#FFFFFF"/>
+                            
+                        <RadioButton
+                            android:id="@+id/rb1Min"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="After 1 Minute"
+                            android:textColor="#FFFFFF"/>
+
+                        <RadioButton
+                            android:id="@+id/rb2Min"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="After 2 Minutes"
+                            android:textColor="#FFFFFF"/>
+                    </RadioGroup>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:hint="Set Password/PIN"
+                        app:hintTextColor="#BB86FC"
+                        app:passwordToggleEnabled="true">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etPassword"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPassword"
+                            android:textColor="#FFFFFF"
+                            android:background="#2C2C2C"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilConfirmPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:hint="Confirm Password/PIN"
+                        app:hintTextColor="#BB86FC"
+                        app:passwordToggleEnabled="true">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etConfirmPassword"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPassword"
+                            android:textColor="#FFFFFF"
+                            android:background="#2C2C2C"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnSave"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Save Settings"
+                        android:layout_marginTop="24dp"/>
+
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

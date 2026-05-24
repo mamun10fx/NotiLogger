@@ -14,6 +14,16 @@
             android:id="@+id/nav_filter"
             android:icon="@android:drawable/ic_menu_preferences"
             android:title="Filter Apps" />
+            
+        <item
+            android:id="@+id/nav_security"
+            android:icon="@android:drawable/ic_secure"
+            android:title="Security / App Lock" />
+            
+        <item
+            android:id="@+id/nav_global_keywords"
+            android:icon="@android:drawable/ic_menu_sort_by_size"
+            android:title="Keywords Filtering" />
     </group>
     
     <item android:title="Actions">

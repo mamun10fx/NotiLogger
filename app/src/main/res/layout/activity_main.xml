@@ -40,11 +40,23 @@
                 android:layout_marginStart="16dp"/>
         </LinearLayout>
 
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/toolbar"
+            android:layout_margin="8dp"
+            android:background="#2C2C2C"
+            app:queryHint="Search app name..."
+            app:iconifiedByDefault="false"
+            app:queryBackground="@android:color/transparent"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark"/>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/toolbar"
+            android:layout_below="@id/searchView"
             android:paddingTop="8dp"
             android:clipToPadding="false"/>
 

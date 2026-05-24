@@ -11,6 +11,9 @@ import kotlinx.coroutines.launch
 
 class DetailsActivity : AppCompatActivity() {
 
+    private lateinit var adapter: DetailAdapter
+    private var allLogs = listOf<NotificationEntity>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_details)
@@ -22,19 +25,27 @@ class DetailsActivity : AppCompatActivity() {
 
         val rv = findViewById<RecyclerView>(R.id.rvDetails)
         val swipeRefresh = findViewById<SwipeRefreshLayout>(R.id.swipeRefresh)
+        val searchView = findViewById<androidx.appcompat.widget.SearchView>(R.id.searchView)
         
         rv.layoutManager = LinearLayoutManager(this)
-        val adapter = DetailAdapter(emptyList())
+        adapter = DetailAdapter(emptyList())
         rv.adapter = adapter
 
-        
+        searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean = false
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterLogs(newText ?: "")
+                return true
+            }
+        })
         
         lifecycleScope.launch {
             AppDatabase.getDatabase(applicationContext)
                 .notificationDao()
                 .getLogsByPackage(pkgName)
                 .collect { logs ->
-                    adapter.updateData(logs)
+                    allLogs = logs
+                    filterLogs(searchView.query.toString())
                     swipeRefresh.isRefreshing = false 
                 }
         }
@@ -44,5 +55,17 @@ class DetailsActivity : AppCompatActivity() {
             
             swipeRefresh.postDelayed({ swipeRefresh.isRefreshing = false }, 1000)
         }
+    }
+
+    private fun filterLogs(query: String) {
+        if (query.isEmpty()) {
+            adapter.updateData(allLogs)
+            return
+        }
+        val filtered = allLogs.filter { 
+            it.title.contains(query, ignoreCase = true) || 
+            it.content.contains(query, ignoreCase = true) 
+        }
+        adapter.updateData(filtered)
     }
 }

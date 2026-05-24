@@ -2,7 +2,8 @@ package com.notilogger
 
 import android.content.Context
 import androidx.room.*
-import kotlinx.coroutines.flow.Flow 
+import kotlinx.coroutines.flow.Flow
+import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 
 @Dao
 interface NotificationDao {
@@ -43,11 +44,24 @@ abstract class AppDatabase : RoomDatabase() {
 
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
+                
+                System.loadLibrary("sqlcipher")
+
+                // --- Encryption Setup ---
+                // For testing, we are using a hardcoded password. 
+                // Later, this will be fetched from user preferences.
+                val passphrase = "test_password".toByteArray() 
+                val factory = SupportOpenHelperFactory(passphrase)
+                // ------------------------
+
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
                     "noti_logger_db"
-                ).build()
+                )
+                .openHelperFactory(factory) // Attach the encryption factory
+                .build()
+                
                 INSTANCE = instance
                 instance
             }

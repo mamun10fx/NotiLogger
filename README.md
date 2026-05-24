@@ -12,18 +12,21 @@
 
 - 📝 **Auto-Logging:** Automatically saves every notification to a local SQLite database.
 - 🛡️ **Advanced Filtering:** 
-    - **Whitelist Mode:** Log only from selected apps.
-    - **Blacklist Mode:** Ignore notifications from specific apps.
-- ⚙️ **System App Toggle:** Option to include or exclude system applications from logs and filters.
-- 📤 **Export & Backup:** Export your logs to a structured `JSON` file for backup or analysis.
+    - **App Filtering:** Whitelist or Blacklist specific apps.
+    - **Keyword Filtering:** Block notifications globally or per-app based on custom keywords (e.g., OTP, Promo).
+- 🔒 **Security & Privacy:**
+    - **Database Encryption:** All logs are secured with AES-256 encryption using **SQLCipher**.
+    - **App Lock:** Secure the interface with a PIN or Password, featuring auto-lock timeouts.
+    - **Privacy First:** No internet permission required. All data remains strictly on-device.
+- 🔍 **Smart Search:** Quickly find notifications by app name, package name, or notification content.
+- 📤 **Export & Backup:** Export your logs to a structured `JSON` file for analysis.
 - 🎨 **Modern UI:** Built with Material 3 components, featuring a clean Dark Mode interface.
-- 🔒 **Privacy First:** All data stays on your device. No internet permission required for logging.
 
 ## 📸 Screenshots
 
 | Home Screen | Filter Settings | Notification Details |
 | :---: | :---: | :---: |
-| *(Image Link)* | *(Image Link)* | *(Image Link)* |
+| ![Home Screen](screenshots/notifications.jpg) | ![Filter Settings](screenshots/filter.jpg) | ![Notification Details](screenshots/menu.jpg) |
 
 ## 🚀 Installation
 
@@ -37,7 +40,8 @@
 
 - **Kotlin** - Primary programming language.
 - **Room Persistence** - Local SQLite database management.
-- **Coroutines & Flow** - Asynchronous programming and reactive data streams.
+- **SQLCipher** - 256-bit AES database encryption.
+- **Coroutines & Flow** - Asynchronous programming.
 - **Material Components** - UI design system.
 - **Gson** - JSON serialization.
 

@@ -17,7 +17,7 @@ import java.util.Locale
 class AppAdapter(
     private var list: List<AppGroup>, 
     private val context: Context,
-    private val onLongClick: (String) -> Unit
+    private val onLongClick: (String, String) -> Unit
 ) : RecyclerView.Adapter<AppAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -62,7 +62,7 @@ class AppAdapter(
 
         
         holder.itemView.setOnLongClickListener {
-            onLongClick(item.packageName)
+            onLongClick(item.packageName, appName)
             true
         }
     }
