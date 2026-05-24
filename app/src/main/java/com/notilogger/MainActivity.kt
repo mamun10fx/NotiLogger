@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navView: NavigationView
     private lateinit var tvEmpty: TextView
+    private var allGroups = listOf<AppGroup>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         tvEmpty = findViewById(R.id.tvEmpty)
         val btnMenu = findViewById<ImageView>(R.id.btnMenu)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+        val searchView = findViewById<androidx.appcompat.widget.SearchView>(R.id.searchView)
 
         adapter = AppAdapter(emptyList(), this) { pkg -> 
              deleteLogsForPackage(pkg)
@@ -47,6 +49,14 @@ class MainActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
 
         btnMenu.setOnClickListener { drawerLayout.openDrawer(GravityCompat.START) }
+
+        searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean = false
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterGroups(newText ?: "")
+                return true
+            }
+        })
 
         navView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
@@ -73,14 +83,32 @@ class MainActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             val groups = AppDatabase.getDatabase(applicationContext).notificationDao().getAppGroups()
             withContext(Dispatchers.Main) {
-                if (groups.isEmpty()) {
-                    tvEmpty.visibility = View.VISIBLE
-                } else {
-                    tvEmpty.visibility = View.GONE
-                    adapter.updateData(groups)
-                }
+                allGroups = groups
+                filterGroups(findViewById<androidx.appcompat.widget.SearchView>(R.id.searchView).query.toString())
             }
         }
+    }
+
+    private fun filterGroups(query: String) {
+        if (query.isEmpty()) {
+            adapter.updateData(allGroups)
+            tvEmpty.visibility = if (allGroups.isEmpty()) View.VISIBLE else View.GONE
+            return
+        }
+
+        val pm = packageManager
+        val filtered = allGroups.filter { group ->
+            val appName = try {
+                val appInfo = pm.getApplicationInfo(group.packageName, 0)
+                pm.getApplicationLabel(appInfo).toString()
+            } catch (e: Exception) {
+                group.packageName
+            }
+            appName.contains(query, ignoreCase = true) || group.packageName.contains(query, ignoreCase = true)
+        }
+        
+        adapter.updateData(filtered)
+        tvEmpty.visibility = if (filtered.isEmpty()) View.VISIBLE else View.GONE
     }
 
     private fun showClearConfirmation() {

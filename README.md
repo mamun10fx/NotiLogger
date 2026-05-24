@@ -23,7 +23,7 @@
 
 | Home Screen | Filter Settings | Notification Details |
 | :---: | :---: | :---: |
-| *(Image Link)* | *(Image Link)* | *(Image Link)* |
+| ![Home Screen](screenshots/notifications.jpg) | ![Filter Settings](screenshots/filter.jpg) | ![Notification Details](screenshots/menu.jpg) |
 
 ## 🚀 Installation
 

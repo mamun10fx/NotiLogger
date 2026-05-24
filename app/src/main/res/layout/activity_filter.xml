@@ -21,6 +21,17 @@
             android:textStyle="bold"
             android:textColor="#FFFFFF"/>
 
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="#2C2C2C"
+            app:queryHint="Search app name or package..."
+            app:iconifiedByDefault="false"
+            app:queryBackground="@android:color/transparent"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark"/>
+
         <CheckBox
             android:id="@+id/cbShowSystem"
             android:layout_width="match_parent"

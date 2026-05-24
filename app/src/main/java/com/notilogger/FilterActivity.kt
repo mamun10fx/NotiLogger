@@ -43,6 +43,7 @@ class FilterActivity : AppCompatActivity() {
     private lateinit var adapter: FilterAdapter
     private lateinit var rv: RecyclerView
     private lateinit var progressBar: ProgressBar
+    private var allApps = listOf<AppInfo>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +55,7 @@ class FilterActivity : AppCompatActivity() {
         val rgMode = findViewById<RadioGroup>(R.id.rgMode)
         val rbBlacklist = findViewById<RadioButton>(R.id.rbBlacklist)
         val rbWhitelist = findViewById<RadioButton>(R.id.rbWhitelist)
+        val searchView = findViewById<androidx.appcompat.widget.SearchView>(R.id.searchView)
 
         cbSystem.isChecked = FilterManager.getShowSystem(this)
         if (FilterManager.getMode(this) == FilterManager.MODE_WHITELIST) {
@@ -77,7 +79,27 @@ class FilterActivity : AppCompatActivity() {
             FilterManager.setMode(this, mode)
         }
 
+        searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean = false
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterApps(newText ?: "")
+                return true
+            }
+        })
+
         loadApps(cbSystem.isChecked)
+    }
+
+    private fun filterApps(query: String) {
+        val filtered = if (query.isEmpty()) {
+            allApps
+        } else {
+            allApps.filter { 
+                it.appName.contains(query, ignoreCase = true) || 
+                it.packageName.contains(query, ignoreCase = true) 
+            }
+        }
+        adapter.submitList(filtered)
     }
 
     private fun loadApps(includeSystemApps: Boolean) {
@@ -127,9 +149,10 @@ class FilterActivity : AppCompatActivity() {
             val sortedResult = result.sortedBy { it.appName.lowercase() }
 
             withContext(Dispatchers.Main) {
+                allApps = sortedResult
                 progressBar.visibility = View.GONE
                 rv.visibility = View.VISIBLE
-                adapter.submitList(sortedResult)
+                filterApps(findViewById<androidx.appcompat.widget.SearchView>(R.id.searchView).query.toString())
             }
         }
     }
