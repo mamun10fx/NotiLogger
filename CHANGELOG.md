@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.1.0] - 2026-05-24
+## [2.0.0] - 2026-05-24
 
 ### Added
 - Search functionality in **MainActivity** to filter notifications by app name.
