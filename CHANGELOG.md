@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.5.0] - 2026-05-24
+
+### Changed
+- **Navigation Update:** Replaced the notification icon/logo in the main toolbar with a standard **hamburger menu** icon to improve navigation discoverability.
+- **UI Polish:** General refinements to the Dark Mode interface for better consistency.
+
 ## [2.4.0] - 2026-05-24
 
 ### Added

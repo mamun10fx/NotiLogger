@@ -29,7 +29,8 @@
 - ⚡ **Real-time UI:** 
     - **Instant Refresh:** Home screen updates immediately as new notifications arrive.
     - **Unread Badges:** Clear visual indicators for new/unseen notification logs.
-- 🎨 **Modern UI:** Built with Material 3 components, featuring a clean Dark Mode interface.
+- 🍔 **Better Navigation:** Hamburger menu icon for easier access to the side drawer.
+- 🎨 **Modern Dark UI:** Clean, consistent interface with unread badges.
 
 ## 🚀 Installation
 
