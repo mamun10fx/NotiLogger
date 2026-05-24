@@ -39,6 +39,17 @@ class MainActivity : AppCompatActivity() {
         drawerLayout = findViewById(R.id.drawerLayout)
         navView = findViewById(R.id.navView)
         tvEmpty = findViewById(R.id.tvEmpty)
+        
+        // Update Nav Header Version Dynamically
+        val headerView = navView.getHeaderView(0)
+        val tvHeaderVersion = headerView.findViewById<TextView>(R.id.navHeaderVersion)
+        try {
+            val pInfo = packageManager.getPackageInfo(packageName, 0)
+            tvHeaderVersion.text = "v${pInfo.versionName}"
+        } catch (e: Exception) {
+            tvHeaderVersion.text = "v2.5.0"
+        }
+
         val btnMenu = findViewById<ImageView>(R.id.btnMenu)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         val searchView = findViewById<androidx.appcompat.widget.SearchView>(R.id.searchView)

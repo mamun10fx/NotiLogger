@@ -1,0 +1,10 @@
+NotiLogger is a lightweight, open-source tool designed to help you capture and manage your system notifications locally.
+
+Key Features:
+- Auto-Logging: Saves notifications to an encrypted SQLite database.
+- Advanced Filters: Blacklist or Whitelist apps and block specific keywords.
+- Telegram Forwarding: Send notifications to multiple Telegram bots and chats in real-time.
+- Privacy First: Data stays on your device. SQLCipher AES-256 encryption included.
+- Backup & Restore: Export and import logs via JSON.
+- Smart Search: Easily search through archived notifications.
+- App Lock: Secure your logs with a PIN or Password.
