@@ -14,6 +14,11 @@
             android:id="@+id/nav_filter"
             android:icon="@android:drawable/ic_menu_preferences"
             android:title="Filter Apps" />
+            
+        <item
+            android:id="@+id/nav_security"
+            android:icon="@android:drawable/ic_secure"
+            android:title="Security / App Lock" />
     </group>
     
     <item android:title="Actions">

@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.0] - 2026-05-24
+
+### Added
+- **Database Encryption:** Secured local storage using SQLCipher (AES-256).
+- **Advanced App Lock:** Introduced PIN/Password protection with auto-lock timeout options (Immediate, 1 min, 2 min).
+- **Setup Confirmation:** Added double verification when setting up a new lock password/PIN.
+- **Modification Security:** Modifying or disabling the app lock now requires the current password.
+
 ## [2.0.0] - 2026-05-24
 
 ### Added

@@ -64,6 +64,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_battery -> ignoreBatteryOptimization()
                 
                 R.id.nav_filter -> startActivity(Intent(this, FilterActivity::class.java))
+                R.id.nav_security -> startActivity(Intent(this, SecurityActivity::class.java))
                 
                 R.id.nav_save -> createFileLauncher.launch("NotiLogs_${System.currentTimeMillis()}.json")
                 R.id.nav_clear -> showClearConfirmation()

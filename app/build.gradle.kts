@@ -12,8 +12,8 @@ android {
         applicationId = "com.notilogger"
         minSdk = 26
         targetSdk = 34
-        versionCode = 2
-        versionName = "2.0"
+        versionCode = 3
+        versionName = "2.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -64,8 +64,15 @@ dependencies {
     implementation("androidx.room:room-ktx:$roomVersion") // Coroutines support
     kapt("androidx.room:room-compiler:$roomVersion")
     
+    // SQLCipher for database encryption
+    implementation("net.zetetic:sqlcipher-android:4.5.4")
+    implementation("androidx.sqlite:sqlite-ktx:2.4.0")
+    
     // Coroutines (Database background a chalanor jonno)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    
+    // Lifecycle for App background detection
+    implementation("androidx.lifecycle:lifecycle-process:2.7.0")
 }
