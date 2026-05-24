@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.5.1] - 2026-05-24
+
+### Changed
+- **Privacy & Branding:** Replaced personal name in navigation header with the app name.
+- **Dynamic Versioning:** Navigation drawer now automatically detects and displays the correct app version.
+- **Metadata:** Added Fastlane folder structure for F-Droid/IzzyOnDroid compatibility.
+
 ## [2.5.0] - 2026-05-24
 
 ### Changed
