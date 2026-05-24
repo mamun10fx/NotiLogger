@@ -40,14 +40,29 @@ class FilterActivity : AppCompatActivity() {
         var isSelected: Boolean
     )
 
+    companion object {
+        const val LEVEL_GLOBAL = 0
+        const val LEVEL_BOT = 1
+        const val LEVEL_CHAT = 2
+    }
+
+    private var level: Int = LEVEL_GLOBAL
+    private var targetId: Long = -1
+
     private lateinit var adapter: FilterAdapter
     private lateinit var rv: RecyclerView
     private lateinit var progressBar: ProgressBar
     private var allApps = listOf<AppInfo>()
+    
+    private val selectedAppsSet = mutableSetOf<String>()
+    private val gson = com.google.gson.Gson()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_filter)
+
+        level = intent.getIntExtra("LEVEL", LEVEL_GLOBAL)
+        targetId = intent.getLongExtra("TARGET_ID", -1)
 
         rv = findViewById(R.id.rvApps)
         progressBar = findViewById(R.id.progressBar)
@@ -57,14 +72,18 @@ class FilterActivity : AppCompatActivity() {
         val rbWhitelist = findViewById<RadioButton>(R.id.rbWhitelist)
         val searchView = findViewById<androidx.appcompat.widget.SearchView>(R.id.searchView)
 
-        cbSystem.isChecked = FilterManager.getShowSystem(this)
-        if (FilterManager.getMode(this) == FilterManager.MODE_WHITELIST) {
-            rbWhitelist.isChecked = true
-        } else {
-            rbBlacklist.isChecked = true
+        // Title update for better UX
+        findViewById<TextView>(R.id.tvFilterTitle)?.text = when(level) {
+            LEVEL_BOT -> "Bot App Filter"
+            LEVEL_CHAT -> "Chat App Filter"
+            else -> "Global App Filter"
         }
 
-        adapter = FilterAdapter(packageManager)
+        setupInitialState(cbSystem, rbBlacklist, rbWhitelist)
+
+        adapter = FilterAdapter(packageManager) { pkg, isSelected ->
+            toggleAppSelection(pkg, isSelected)
+        }
         rv.setHasFixedSize(true)
         rv.layoutManager = LinearLayoutManager(this)
         rv.adapter = adapter
@@ -76,7 +95,7 @@ class FilterActivity : AppCompatActivity() {
 
         rgMode.setOnCheckedChangeListener { _, id ->
             val mode = if (id == R.id.rbWhitelist) FilterManager.MODE_WHITELIST else FilterManager.MODE_BLACKLIST
-            FilterManager.setMode(this, mode)
+            updateFilterMode(mode)
         }
 
         searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
@@ -88,6 +107,56 @@ class FilterActivity : AppCompatActivity() {
         })
 
         loadApps(cbSystem.isChecked)
+    }
+
+    private fun setupInitialState(cbSystem: CheckBox, rbBlacklist: RadioButton, rbWhitelist: RadioButton) {
+        cbSystem.isChecked = FilterManager.getShowSystem(this)
+        
+        lifecycleScope.launch(Dispatchers.IO) {
+            val mode = when (level) {
+                LEVEL_BOT -> AppDatabase.getDatabase(applicationContext).notificationDao().getBotById(targetId)?.filterMode ?: FilterManager.MODE_BLACKLIST
+                LEVEL_CHAT -> AppDatabase.getDatabase(applicationContext).notificationDao().getChatById(targetId)?.filterMode ?: FilterManager.MODE_BLACKLIST
+                else -> FilterManager.getMode(this@FilterActivity)
+            }
+            
+            withContext(Dispatchers.Main) {
+                if (mode == FilterManager.MODE_WHITELIST) rbWhitelist.isChecked = true else rbBlacklist.isChecked = true
+            }
+        }
+    }
+
+    private fun updateFilterMode(mode: Int) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            when (level) {
+                LEVEL_GLOBAL -> FilterManager.setMode(this@FilterActivity, mode)
+                LEVEL_BOT -> {
+                    val dao = AppDatabase.getDatabase(applicationContext).notificationDao()
+                    dao.getBotById(targetId)?.let { dao.updateBot(it.copy(filterMode = mode)) }
+                }
+                LEVEL_CHAT -> {
+                    val dao = AppDatabase.getDatabase(applicationContext).notificationDao()
+                    dao.getChatById(targetId)?.let { dao.updateChat(it.copy(filterMode = mode)) }
+                }
+            }
+        }
+    }
+
+    private fun toggleAppSelection(pkg: String, isSelected: Boolean) {
+        if (isSelected) selectedAppsSet.add(pkg) else selectedAppsSet.remove(pkg)
+        
+        lifecycleScope.launch(Dispatchers.IO) {
+            when (level) {
+                LEVEL_GLOBAL -> FilterManager.toggleApp(this@FilterActivity, pkg, isSelected)
+                LEVEL_BOT -> {
+                    val dao = AppDatabase.getDatabase(applicationContext).notificationDao()
+                    dao.getBotById(targetId)?.let { dao.updateBot(it.copy(selectedAppsJson = gson.toJson(selectedAppsSet.toList()))) }
+                }
+                LEVEL_CHAT -> {
+                    val dao = AppDatabase.getDatabase(applicationContext).notificationDao()
+                    dao.getChatById(targetId)?.let { dao.updateChat(it.copy(selectedAppsJson = gson.toJson(selectedAppsSet.toList()))) }
+                }
+            }
+        }
     }
 
     private fun filterApps(query: String) {
@@ -108,46 +177,36 @@ class FilterActivity : AppCompatActivity() {
 
         lifecycleScope.launch(Dispatchers.IO) {
             val pm = packageManager
-            val selectedApps = FilterManager.getSelectedApps(applicationContext)
-            val result = mutableListOf<AppInfo>()
+            
+            // Load selected apps based on level
+            val selected = when (level) {
+                LEVEL_BOT -> {
+                    val json = AppDatabase.getDatabase(applicationContext).notificationDao().getBotById(targetId)?.selectedAppsJson ?: "[]"
+                    val type = object : com.google.gson.reflect.TypeToken<List<String>>() {}.type
+                    gson.fromJson<List<String>>(json, type).toSet()
+                }
+                LEVEL_CHAT -> {
+                    val json = AppDatabase.getDatabase(applicationContext).notificationDao().getChatById(targetId)?.selectedAppsJson ?: "[]"
+                    val type = object : com.google.gson.reflect.TypeToken<List<String>>() {}.type
+                    gson.fromJson<List<String>>(json, type).toSet()
+                }
+                else -> FilterManager.getSelectedApps(applicationContext)
+            }
+            
+            selectedAppsSet.clear()
+            selectedAppsSet.addAll(selected)
 
+            val result = mutableListOf<AppInfo>()
             try {
                 val apps = pm.getInstalledApplications(PackageManager.GET_META_DATA)
-
                 for (app in apps) {
-                    if (!includeSystemApps && (app.flags and ApplicationInfo.FLAG_SYSTEM) != 0) {
-                        continue
-                    }
-
-                    val name = try {
-                        pm.getApplicationLabel(app)?.toString()
-                    } catch (e: Exception) {
-                        null 
-                    }
-
-                    val isSelected = selectedApps.contains(app.packageName)
-                    result.add(
-                        AppInfo(
-                            packageName = app.packageName,
-                            appName = name ?: app.packageName,
-                            isSelected = isSelected
-                        )
-                    )
+                    if (!includeSystemApps && (app.flags and ApplicationInfo.FLAG_SYSTEM) != 0) continue
+                    val name = try { pm.getApplicationLabel(app)?.toString() } catch (e: Exception) { null }
+                    result.add(AppInfo(packageName = app.packageName, appName = name ?: app.packageName, isSelected = selectedAppsSet.contains(app.packageName)))
                 }
-            } catch (e: SecurityException) {
-                e.printStackTrace()
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(this@FilterActivity, "Error: Permission denied.", Toast.LENGTH_SHORT).show()
-                }
-            } catch (e: OutOfMemoryError) {
-                e.printStackTrace()
-                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@FilterActivity, "Error: Out of memory.", Toast.LENGTH_SHORT).show()
-                }
-            }
+            } catch (e: Exception) { e.printStackTrace() }
 
             val sortedResult = result.sortedBy { it.appName.lowercase() }
-
             withContext(Dispatchers.Main) {
                 allApps = sortedResult
                 progressBar.visibility = View.GONE
@@ -158,12 +217,11 @@ class FilterActivity : AppCompatActivity() {
     }
 
 
-    class FilterAdapter(private val pm: PackageManager) :
+    class FilterAdapter(private val pm: PackageManager, private val onToggle: (String, Boolean) -> Unit) :
         ListAdapter<AppInfo, FilterAdapter.VH>(AppDiffCallback()) {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-            val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_filter_app, parent, false)
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_filter_app, parent, false)
             return VH(view)
         }
 
@@ -187,7 +245,6 @@ class FilterActivity : AppCompatActivity() {
             fun bind(item: AppInfo) {
                 name.text = item.appName
                 pkg.text = item.packageName
-
                 sw.setOnCheckedChangeListener(null)
                 sw.isChecked = item.isSelected
 
@@ -203,24 +260,18 @@ class FilterActivity : AppCompatActivity() {
                             val drawable = pm.getApplicationIcon(item.packageName)
                             val bitmap = drawableToBitmap(drawable)
                             IconCache.putBitmap(item.packageName, bitmap)
-                            withContext(Dispatchers.Main) {
-                                img.setImageBitmap(bitmap)
-                            }
-                        } catch (e: Exception) {
-                            Log.e("FilterAdapter", "Error loading icon for ${item.packageName}", e)
-                        }
+                            withContext(Dispatchers.Main) { img.setImageBitmap(bitmap) }
+                        } catch (e: Exception) { }
                     }
                 }
 
                 sw.setOnCheckedChangeListener { _, isChecked ->
-                    FilterManager.toggleApp(itemView.context, item.packageName, isChecked)
+                    onToggle(item.packageName, isChecked)
                     item.isSelected = isChecked
                 }
             }
 
-            fun unbind() {
-                imageJob?.cancel()
-            }
+            fun unbind() { imageJob?.cancel() }
 
             private fun drawableToBitmap(drawable: Drawable): Bitmap {
                 if (drawable is BitmapDrawable) return drawable.bitmap
@@ -236,12 +287,7 @@ class FilterActivity : AppCompatActivity() {
     }
 
     class AppDiffCallback : DiffUtil.ItemCallback<AppInfo>() {
-        override fun areItemsTheSame(oldItem: AppInfo, newItem: AppInfo): Boolean {
-            return oldItem.packageName == newItem.packageName
-        }
-
-        override fun areContentsTheSame(oldItem: AppInfo, newItem: AppInfo): Boolean {
-            return oldItem.isSelected == newItem.isSelected && oldItem.appName == newItem.appName
-        }
+        override fun areItemsTheSame(oldItem: AppInfo, newItem: AppInfo): Boolean = oldItem.packageName == newItem.packageName
+        override fun areContentsTheSame(oldItem: AppInfo, newItem: AppInfo): Boolean = oldItem.isSelected == newItem.isSelected && oldItem.appName == newItem.appName
     }
 }

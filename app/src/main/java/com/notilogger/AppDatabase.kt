@@ -25,6 +25,38 @@ interface NotificationDao {
 
     @Query("DELETE FROM notifications")
     suspend fun clearAll()
+
+    // Telegram Bot methods
+    @Insert
+    suspend fun insertBot(bot: TelegramBot): Long
+
+    @Update
+    suspend fun updateBot(bot: TelegramBot)
+
+    @Delete
+    suspend fun deleteBot(bot: TelegramBot)
+
+    @Query("SELECT * FROM telegram_bots ORDER BY id DESC")
+    suspend fun getAllBots(): List<TelegramBot>
+
+    @Query("SELECT * FROM telegram_bots WHERE id = :id")
+    suspend fun getBotById(id: Long): TelegramBot?
+
+    // Telegram Chat methods
+    @Insert
+    suspend fun insertChat(chat: TelegramChat): Long
+
+    @Update
+    suspend fun updateChat(chat: TelegramChat)
+
+    @Delete
+    suspend fun deleteChat(chat: TelegramChat)
+
+    @Query("SELECT * FROM telegram_chats WHERE botId = :botId ORDER BY id DESC")
+    suspend fun getChatsForBot(botId: Long): List<TelegramChat>
+
+    @Query("SELECT * FROM telegram_chats WHERE id = :id")
+    suspend fun getChatById(id: Long): TelegramChat?
 }
 
 
@@ -35,7 +67,7 @@ data class AppGroup(
 )
 
 
-@Database(entities = [NotificationEntity::class], version = 1, exportSchema = false)
+@Database(entities = [NotificationEntity::class, TelegramBot::class, TelegramChat::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun notificationDao(): NotificationDao
 
@@ -60,6 +92,7 @@ abstract class AppDatabase : RoomDatabase() {
                     "noti_logger_db"
                 )
                 .openHelperFactory(factory) // Attach the encryption factory
+                .fallbackToDestructiveMigration() // Clear old data on schema change
                 .build()
                 
                 INSTANCE = instance

@@ -14,19 +14,17 @@
 - 🛡️ **Advanced Filtering:** 
     - **App Filtering:** Whitelist or Blacklist specific apps.
     - **Keyword Filtering:** Block notifications globally or per-app based on custom keywords (e.g., OTP, Promo).
+- 🚀 **Telegram Forwarding:**
+    - **Multi-Bot Support:** Forward notifications to multiple Telegram bots and chats in real-time.
+    - **Hierarchical Logic:** Powerful multi-level filtering (Chat > Bot > Global) for precise control.
+    - **Auto-prefill:** Custom filters automatically pre-fill with parent settings for quick setup.
 - 🔒 **Security & Privacy:**
     - **Database Encryption:** All logs are secured with AES-256 encryption using **SQLCipher**.
     - **App Lock:** Secure the interface with a PIN or Password, featuring auto-lock timeouts.
-    - **Privacy First:** No internet permission required. All data remains strictly on-device.
+    - **Privacy First:** Internet permission is used **exclusively** for forwarding to Telegram. All other data remains strictly on-device.
 - 🔍 **Smart Search:** Quickly find notifications by app name, package name, or notification content.
 - 📤 **Export & Backup:** Export your logs to a structured `JSON` file for analysis.
 - 🎨 **Modern UI:** Built with Material 3 components, featuring a clean Dark Mode interface.
-
-## 📸 Screenshots
-
-| Home Screen | Filter Settings | Notification Details |
-| :---: | :---: | :---: |
-| ![Home Screen](screenshots/notifications.jpg) | ![Filter Settings](screenshots/filter.jpg) | ![Notification Details](screenshots/menu.jpg) |
 
 ## 🚀 Installation
 
@@ -42,6 +40,7 @@
 - **Room Persistence** - Local SQLite database management.
 - **SQLCipher** - 256-bit AES database encryption.
 - **Coroutines & Flow** - Asynchronous programming.
+- **HttpURLConnection** - Lightweight, library-free networking for Telegram API.
 - **Material Components** - UI design system.
 - **Gson** - JSON serialization.
 

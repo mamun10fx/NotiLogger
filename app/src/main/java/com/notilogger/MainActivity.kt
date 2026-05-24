@@ -63,9 +63,10 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_permission -> startActivity(Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS))
                 R.id.nav_battery -> ignoreBatteryOptimization()
                 
-                R.id.nav_filter -> startActivity(Intent(this, FilterActivity::class.java))
+                R.id.nav_filter -> startActivity(Intent(this, FilterActivity::class.java).apply { putExtra("LEVEL", FilterActivity.LEVEL_GLOBAL) })
                 R.id.nav_security -> startActivity(Intent(this, SecurityActivity::class.java))
-                R.id.nav_global_keywords -> startActivity(Intent(this, GlobalKeywordActivity::class.java))
+                R.id.nav_global_keywords -> startActivity(Intent(this, KeywordFilterActivity::class.java).apply { putExtra("LEVEL", KeywordFilterActivity.LEVEL_GLOBAL) })
+                R.id.nav_telegram -> startActivity(Intent(this, TelegramBotsActivity::class.java))
                 
                 R.id.nav_save -> createFileLauncher.launch("NotiLogs_${System.currentTimeMillis()}.json")
                 R.id.nav_clear -> showClearConfirmation()
@@ -136,7 +137,8 @@ class MainActivity : AppCompatActivity() {
                 when (which) {
                     0 -> deleteLogsForPackage(packageName)
                     1 -> {
-                        val intent = Intent(this, AppKeywordActivity::class.java)
+                        val intent = Intent(this, KeywordFilterActivity::class.java)
+                        intent.putExtra("LEVEL", KeywordFilterActivity.LEVEL_APP)
                         intent.putExtra("PKG_NAME", packageName)
                         intent.putExtra("APP_NAME", appName)
                         startActivity(intent)

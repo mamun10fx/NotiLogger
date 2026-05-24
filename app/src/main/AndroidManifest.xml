@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
 
@@ -38,11 +39,19 @@
 	    android:exported="false" />
 	    
 	<activity
-	    android:name=".GlobalKeywordActivity"
+	    android:name=".KeywordFilterActivity"
 	    android:exported="false" />
 	    
 	<activity
-	    android:name=".AppKeywordActivity"
+	    android:name=".TelegramBotsActivity"
+	    android:exported="false" />
+
+	<activity
+	    android:name=".BotDetailsActivity"
+	    android:exported="false" />
+
+	<activity
+	    android:name=".ChatDetailsActivity"
 	    android:exported="false" />
 
 	<service android:name=".NotificationService"

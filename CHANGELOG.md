@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.3.0] - 2026-05-24
+
+### Added
+- **Telegram Forwarding:** Forward notifications to multiple Telegram bots and chats in real-time.
+- **Hierarchical Filtering:** Multi-level filtering support (Global > Bot > Chat) for both apps and keywords.
+- **Auto-prefill Logic:** New custom filters now automatically pre-fill with parent settings for easier configuration.
+
 ## [2.2.0] - 2026-05-24
 
 ### Added
