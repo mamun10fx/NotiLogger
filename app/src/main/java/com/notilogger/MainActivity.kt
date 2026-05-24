@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -50,6 +51,14 @@ class MainActivity : AppCompatActivity() {
 
         btnMenu.setOnClickListener { drawerLayout.openDrawer(GravityCompat.START) }
 
+        lifecycleScope.launch {
+            AppDatabase.getDatabase(applicationContext).notificationDao().getAppGroupsFlow()
+                .collect { groups ->
+                    allGroups = groups
+                    filterGroups(searchView.query.toString())
+                }
+        }
+
         searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean = false
             override fun onQueryTextChange(newText: String?): Boolean {
@@ -68,7 +77,9 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_global_keywords -> startActivity(Intent(this, KeywordFilterActivity::class.java).apply { putExtra("LEVEL", KeywordFilterActivity.LEVEL_GLOBAL) })
                 R.id.nav_telegram -> startActivity(Intent(this, TelegramBotsActivity::class.java))
                 
-                R.id.nav_save -> createFileLauncher.launch("NotiLogs_${System.currentTimeMillis()}.json")
+                R.id.nav_export -> startActivity(Intent(this, ExportActivity::class.java))
+                R.id.nav_import -> importFileLauncher.launch(arrayOf("application/json"))
+                
                 R.id.nav_clear -> showClearConfirmation()
                 R.id.nav_about -> showAboutDialog()
             }
@@ -79,17 +90,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        loadLogs()
-    }
-
-    private fun loadLogs() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val groups = AppDatabase.getDatabase(applicationContext).notificationDao().getAppGroups()
-            withContext(Dispatchers.Main) {
-                allGroups = groups
-                filterGroups(findViewById<androidx.appcompat.widget.SearchView>(R.id.searchView).query.toString())
-            }
-        }
     }
 
     private fun filterGroups(query: String) {
@@ -119,9 +119,8 @@ class MainActivity : AppCompatActivity() {
             .setTitle("Clear All Logs?")
             .setMessage("Are you sure? This cannot be undone.")
             .setPositiveButton("Delete") { _, _ ->
-                CoroutineScope(Dispatchers.IO).launch {
+                lifecycleScope.launch(Dispatchers.IO) {
                     AppDatabase.getDatabase(applicationContext).notificationDao().clearAll()
-                    loadLogs()
                 }
                 Toast.makeText(this, "Cleared!", Toast.LENGTH_SHORT).show()
             }
@@ -130,7 +129,7 @@ class MainActivity : AppCompatActivity() {
     }
     
     private fun showAppOptions(packageName: String, appName: String) {
-        val options = arrayOf("🗑️ Clear Logs", "🔑 Keyword Filters")
+        val options = arrayOf("🗑️ Clear Logs", "🔑 Keyword Filters", "📤 Export Logs")
         MaterialAlertDialogBuilder(this)
             .setTitle(appName)
             .setItems(options) { _, which ->
@@ -143,20 +142,69 @@ class MainActivity : AppCompatActivity() {
                         intent.putExtra("APP_NAME", appName)
                         startActivity(intent)
                     }
+                    2 -> performSingleAppExport(packageName, appName)
                 }
             }
             .show()
     }
 
+    private fun performSingleAppExport(packageName: String, appName: String) {
+        singleExportPkg = packageName
+        createFileLauncher.launch("NotiLogs_${appName}_${System.currentTimeMillis()}.json")
+    }
+
+    private var singleExportPkg: String? = null
+
+    private val createFileLauncher = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+        uri?.let {
+            lifecycleScope.launch(Dispatchers.IO) {
+                val db = AppDatabase.getDatabase(applicationContext)
+                val logs = if (singleExportPkg != null) {
+                    db.notificationDao().getLogsByPackages(listOf(singleExportPkg!!))
+                } else {
+                    db.notificationDao().getAllLogsRaw()
+                }
+
+                val json = Gson().toJson(logs)
+                try {
+                    contentResolver.openOutputStream(it)?.use { os ->
+                        OutputStreamWriter(os).use { writer -> writer.write(json) }
+                    }
+                    withContext(Dispatchers.Main) { Toast.makeText(this@MainActivity, "Export successful!", Toast.LENGTH_SHORT).show() }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) { Toast.makeText(this@MainActivity, "Failed to export", Toast.LENGTH_SHORT).show() }
+                } finally {
+                    singleExportPkg = null
+                }
+            }
+        }
+    }
+
+    private val importFileLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        uri?.let {
+            lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    val json = contentResolver.openInputStream(it)?.bufferedReader()?.use { it.readText() }
+                    val type = object : com.google.gson.reflect.TypeToken<List<NotificationEntity>>() {}.type
+                    val logs: List<NotificationEntity> = Gson().fromJson(json, type)
+
+                    AppDatabase.getDatabase(applicationContext).notificationDao().insertBatch(logs)
+
+                    withContext(Dispatchers.Main) { Toast.makeText(this@MainActivity, "Imported ${logs.size} logs!", Toast.LENGTH_SHORT).show() }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) { Toast.makeText(this@MainActivity, "Invalid JSON file", Toast.LENGTH_SHORT).show() }
+                }
+            }
+        }
+    }
     private fun deleteLogsForPackage(pkg: String) {
          MaterialAlertDialogBuilder(this)
             .setTitle("Delete App Logs?")
             .setMessage("Delete all logs for this app?")
             .setPositiveButton("Delete") { _, _ ->
-                CoroutineScope(Dispatchers.IO).launch {
+                lifecycleScope.launch(Dispatchers.IO) {
                     val dao = AppDatabase.getDatabase(applicationContext).notificationDao()
                     dao.deleteAppLogs(pkg)
-                    loadLogs()
                 }
                 Toast.makeText(this, "Logs deleted!", Toast.LENGTH_SHORT).show()
             }
@@ -168,23 +216,6 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
         try { startActivity(intent) } catch (e: Exception) {
             Toast.makeText(this, "Search 'Battery Optimization' in Settings", Toast.LENGTH_LONG).show()
-        }
-    }
-
-    private val createFileLauncher = registerForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
-        uri?.let {
-            CoroutineScope(Dispatchers.IO).launch {
-                val allLogs = AppDatabase.getDatabase(applicationContext).notificationDao().getAllLogsRaw() 
-                val json = Gson().toJson(allLogs)
-                try {
-                    contentResolver.openOutputStream(it)?.use { os ->
-                        OutputStreamWriter(os).use { writer -> writer.write(json) }
-                    }
-                    withContext(Dispatchers.Main) { Toast.makeText(this@MainActivity, "Saved successfully!", Toast.LENGTH_SHORT).show() }
-                } catch (e: Exception) {
-                    withContext(Dispatchers.Main) { Toast.makeText(this@MainActivity, "Failed to save", Toast.LENGTH_SHORT).show() }
-                }
-            }
         }
     }
 

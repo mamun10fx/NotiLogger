@@ -22,6 +22,7 @@ class DetailAdapter(private var list: List<NotificationEntity>) :
         val tvContent: TextView = view.findViewById(R.id.tvNotiContent)
         val tvTime: TextView = view.findViewById(R.id.tvNotiTime)
         val btnCopy: ImageButton = view.findViewById(R.id.btnCopy)
+        val tvNewTag: TextView = view.findViewById(R.id.tvNewTag)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -37,6 +38,9 @@ class DetailAdapter(private var list: List<NotificationEntity>) :
         holder.tvTitle.text = item.title
         holder.tvContent.text = item.content
         holder.tvTime.text = timeStr
+        
+        holder.tvNewTag.visibility = if (item.isSeen) View.GONE else View.VISIBLE
+        holder.tvTitle.setTextColor(if (item.isSeen) android.graphics.Color.parseColor("#FFFFFF") else android.graphics.Color.parseColor("#BB86FC"))
 
         
         holder.btnCopy.setOnClickListener {

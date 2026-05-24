@@ -9,5 +9,6 @@ data class NotificationEntity(
     val packageName: String,
     val title: String,
     val content: String,
-    val timestamp: Long
+    val timestamp: Long,
+    val isSeen: Boolean = false
 )

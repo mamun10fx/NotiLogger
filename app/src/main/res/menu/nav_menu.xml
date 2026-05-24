@@ -31,12 +31,21 @@
             android:title="Telegram Forwarding" />
     </group>
     
-    <item android:title="Actions">
+    <item android:title="Backup &amp; Restore">
         <menu>
             <item
-                android:id="@+id/nav_save"
+                android:id="@+id/nav_export"
                 android:icon="@android:drawable/ic_menu_save"
-                android:title="Save Logs to File" />
+                android:title="Export to JSON" />
+            <item
+                android:id="@+id/nav_import"
+                android:icon="@android:drawable/ic_menu_upload"
+                android:title="Import from JSON" />
+        </menu>
+    </item>
+
+    <item android:title="Actions">
+        <menu>
             <item
                 android:id="@+id/nav_clear"
                 android:icon="@android:drawable/ic_menu_delete"

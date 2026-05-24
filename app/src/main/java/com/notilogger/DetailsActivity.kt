@@ -47,6 +47,11 @@ class DetailsActivity : AppCompatActivity() {
                     allLogs = logs
                     filterLogs(searchView.query.toString())
                     swipeRefresh.isRefreshing = false 
+                    
+                    // Mark as seen
+                    if (logs.any { !it.isSeen }) {
+                        AppDatabase.getDatabase(applicationContext).notificationDao().markAsSeen(pkgName)
+                    }
                 }
         }
 

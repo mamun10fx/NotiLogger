@@ -25,6 +25,7 @@ class AppAdapter(
         val tvAppName: TextView = view.findViewById(R.id.tvAppName)
         val tvLastTime: TextView = view.findViewById(R.id.tvLastTime)
         val tvCount: TextView = view.findViewById(R.id.tvCount)
+        val tvUnread: TextView = view.findViewById(R.id.tvUnread)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -47,8 +48,17 @@ class AppAdapter(
         }
 
         holder.tvAppName.text = appName
-        holder.tvAppName.setTextColor(android.graphics.Color.WHITE) 
+        holder.tvAppName.setTextColor(if (item.unreadCount > 0) android.graphics.Color.parseColor("#BB86FC") else android.graphics.Color.WHITE) 
+        
         holder.tvCount.text = item.count.toString()
+        
+        if (item.unreadCount > 0) {
+            holder.tvUnread.visibility = View.VISIBLE
+            holder.tvUnread.text = item.unreadCount.toString()
+        } else {
+            holder.tvUnread.visibility = View.GONE
+        }
+
         val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault())
         holder.tvLastTime.text = sdf.format(Date(item.lastTime))
 

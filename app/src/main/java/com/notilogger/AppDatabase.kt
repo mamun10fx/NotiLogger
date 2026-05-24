@@ -10,8 +10,8 @@ interface NotificationDao {
     @Insert
     suspend fun insert(notification: NotificationEntity)
 
-    @Query("SELECT packageName, COUNT(*) as count, MAX(timestamp) as lastTime FROM notifications GROUP BY packageName ORDER BY lastTime DESC")
-    suspend fun getAppGroups(): List<AppGroup>
+    @Query("SELECT packageName, COUNT(*) as count, SUM(CASE WHEN isSeen = 0 THEN 1 ELSE 0 END) as unreadCount, MAX(timestamp) as lastTime FROM notifications GROUP BY packageName ORDER BY lastTime DESC")
+    fun getAppGroupsFlow(): Flow<List<AppGroup>>
     
     @Query("SELECT * FROM notifications ORDER BY timestamp DESC")
     suspend fun getAllLogsRaw(): List<NotificationEntity>
@@ -19,6 +19,15 @@ interface NotificationDao {
     
     @Query("SELECT * FROM notifications WHERE packageName = :pkgName ORDER BY timestamp DESC")
     fun getLogsByPackage(pkgName: String): Flow<List<NotificationEntity>>
+
+    @Query("UPDATE notifications SET isSeen = 1 WHERE packageName = :pkgName")
+    suspend fun markAsSeen(pkgName: String)
+
+    @Query("SELECT * FROM notifications WHERE packageName IN (:pkgNames) ORDER BY timestamp DESC")
+    suspend fun getLogsByPackages(pkgNames: List<String>): List<NotificationEntity>
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertBatch(notifications: List<NotificationEntity>)
 
     @Query("DELETE FROM notifications WHERE packageName = :pkgName")
     suspend fun deleteAppLogs(pkgName: String)
@@ -63,11 +72,12 @@ interface NotificationDao {
 data class AppGroup(
     val packageName: String,
     val count: Int,
+    val unreadCount: Int,
     val lastTime: Long
 )
 
 
-@Database(entities = [NotificationEntity::class, TelegramBot::class, TelegramChat::class], version = 2, exportSchema = false)
+@Database(entities = [NotificationEntity::class, TelegramBot::class, TelegramChat::class], version = 3, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun notificationDao(): NotificationDao
 

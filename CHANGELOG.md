@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.4.0] - 2026-05-24
+
+### Added
+- **Backup & Restore:** Added full JSON export and import functionality with multi-app selection support.
+- **Real-time UI:** Home screen now updates instantly when new notifications arrive using Room Flow.
+- **Unread Status:** Added visual indicators (badges and tags) for new/unseen notifications.
+- **Per-App Export:** Export logs for a specific app directly from the home screen via long-press.
+
 ## [2.3.0] - 2026-05-24
 
 ### Added

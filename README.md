@@ -23,7 +23,12 @@
     - **App Lock:** Secure the interface with a PIN or Password, featuring auto-lock timeouts.
     - **Privacy First:** Internet permission is used **exclusively** for forwarding to Telegram. All other data remains strictly on-device.
 - 🔍 **Smart Search:** Quickly find notifications by app name, package name, or notification content.
-- 📤 **Export & Backup:** Export your logs to a structured `JSON` file for analysis.
+- 📤 **Backup & Restore:**
+    - **JSON Export:** Export logs for all or selected apps with timestamped filenames.
+    - **JSON Import:** Easily restore previously exported logs back into the database.
+- ⚡ **Real-time UI:** 
+    - **Instant Refresh:** Home screen updates immediately as new notifications arrive.
+    - **Unread Badges:** Clear visual indicators for new/unseen notification logs.
 - 🎨 **Modern UI:** Built with Material 3 components, featuring a clean Dark Mode interface.
 
 ## 🚀 Installation
